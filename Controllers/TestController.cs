@@ -23,5 +23,13 @@ namespace OData_Demo.Controllers
         {
             return _context.BookCategories;
         }
+
+        [HttpGet("{id}")]
+        [EnableQuery]
+        public SingleResult<BookCategory> GetBook(int id)
+        {
+            IQueryable<BookCategory> result = _context.BookCategories.Where(x => x.Id == id);
+            return SingleResult.Create(result);
+        }
     }
 }
