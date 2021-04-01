@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,23 +24,19 @@ namespace OData_Demo.Controllers
 
         // GET: api/Category
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        [CustomEnableQuery(PageSize = 2)]
+        public IQueryable<Category> GetCategories()
         {
-            return await _context.Categories.ToListAsync();
+            return _context.Categories;
         }
 
         // GET: api/Category/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        [EnableQuery]
+        public SingleResult<Category> GetCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return category;
+           IQueryable<Category> result = _context.Categories.Where(x => x.Id == id);
+           return SingleResult.Create(result);
         }
 
         // PUT: api/Category/5

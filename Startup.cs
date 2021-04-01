@@ -87,8 +87,9 @@ namespace OData_Demo
         private IEdmModel GetEdmModel()
         {
             var odataBuilder = new ODataConventionModelBuilder();
+            odataBuilder.EntitySet<Book>("Book");
+            odataBuilder.EntitySet<Category>("Category");
             odataBuilder.EntitySet<BookCategory>("Test");
-            //odataBuilder.EntitySet<Category>("Category");
 
             return odataBuilder.GetEdmModel();
         }

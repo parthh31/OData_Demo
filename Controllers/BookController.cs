@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,23 +24,19 @@ namespace OData_Demo.Controllers
 
         // GET: api/Book
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        [CustomEnableQuery(PageSize = 20)]
+        public IQueryable<Book> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            return _context.Books;
         }
 
         // GET: api/Book/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        [EnableQuery]
+        public SingleResult<Book> GetBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return book;
+            IQueryable<Book> result = _context.Books.Where(x => x.Id == id);
+            return SingleResult.Create(result);
         }
 
         // PUT: api/Book/5
